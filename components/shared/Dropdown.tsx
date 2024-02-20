@@ -32,7 +32,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([
     { _id: "1", name: "Category 1" },
     { _id: "2", name: "Category 2" },
-  ]);
+  ] as ICategory[]);
 
   const handleAddCategory = () => {
     alert("Add Category")
