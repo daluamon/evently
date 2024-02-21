@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { ICategory } from "@/lib/database/models/category.models";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { Input } from "../ui/input";
+import { createCategory, getAllCategories } from "@/lib/actions/category.actions";
 
 type DropdownProps = {
   value?: string;
@@ -29,14 +30,25 @@ type DropdownProps = {
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [newCategory, setNewCategory] = useState("");
-  const [categories, setCategories] = useState<ICategory[]>([
-    { _id: "1", name: "Category 1" },
-    { _id: "2", name: "Category 2" },
-  ] as ICategory[]);
+  const [categories, setCategories] = useState<ICategory[]>([] as ICategory[]);
 
   const handleAddCategory = () => {
-    alert("Add Category")
+    createCategory({
+      categoryName: newCategory.trim(),
+    })
+    .then((category) => {
+      setCategories((prevState) => [...prevState, category])
+    })
   }
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const categoryList = await getAllCategories();
+      categoryList && setCategories(categoryList as ICategory[]);
+    }
+    getCategories();
+  }, []);
+
   return (
     <Select onValueChange={onChangeHandler} value={value}>
       <SelectTrigger className="select-field">
@@ -56,7 +68,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
 
         <AlertDialog>
           <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-500 hover:text-white focus:bg-primary-500">
-            Adicionar Categoria
+            Adicionar uma nova categoria
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-white">
             <AlertDialogHeader>
