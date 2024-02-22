@@ -27,14 +27,23 @@ import { Checkbox } from "../ui/checkbox";
 import { useUploadThing } from '@/lib/uploadthing';
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/lib/actions/event.actions";
+import { IEvent } from "@/lib/database/models/event.models";
 
 type EventFormProps = {
   userId: string;
   type: "Create" | "Update";
+  event?: IEvent;
+  eventId?: string;
 };
 
-const EventForm = ({ userId, type }: EventFormProps) => {
-  const initialValues = eventDefaultValues;
+const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
+  const initialValues = event && type === "Update" 
+  ? { 
+    ...event,
+    startDate: new Date(event.startDateTime),
+    endDateTime: new Date(event.endDateTime)
+  }
+  : eventDefaultValues;
   const [files, setFiles] = useState<File[]>([]);
   const [startDate, setStartDate] = useState(new Date());
   const router = useRouter();
